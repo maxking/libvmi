@@ -225,8 +225,12 @@ file_get_memsize(
         errprint("Failed to stat file.\n");
         goto error_exit;
     }
-    *allocated_ram_size = s.st_size;
-    *max_physical_address = s.st_size;
+	/*
+	 * XXX: Harcoding the size of the memory here as the file descriptor
+	 * to /dev/mem would have the size of 0 bytes.
+	 */
+    *allocated_ram_size = 2147475456;
+    *max_physical_address = 2147475456;
     ret = VMI_SUCCESS;
 
 error_exit:
@@ -306,7 +310,9 @@ file_test(
         goto error_exit;
     }
     if (!s.st_size) {
-        goto error_exit;
+		errprint("The file size zero! Please check if it is correct.\n");
+		errprint("Setting the file size to a hardcoded value of :1073733632 \n");
+		s.st_size = 1073733;
     }
     ret = VMI_SUCCESS;
 
