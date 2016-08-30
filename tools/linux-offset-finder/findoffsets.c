@@ -47,6 +47,10 @@ my_init_module(
     unsigned long pidOffset;
     unsigned long pgdOffset;
     unsigned long addrOffset;
+	unsigned long credOffset;
+	unsigned long uidOffset;
+	unsigned long gidOffset;
+	unsigned long parentOffset;
 
     printk(KERN_ALERT "Module %s loaded.\n\n", MYMODNAME);
     p = current;
@@ -62,6 +66,13 @@ my_init_module(
         addrOffset =
             (unsigned long) (&(p->mm->start_code)) -
             (unsigned long) (p->mm);
+		credOffset = (unsigned long) (&(p->cred)) - (unsigned long) (p);
+		uidOffset = (unsigned long) (&(p->cred->uid)) -
+				    (unsigned long) (p->cred);
+		gidOffset = (unsigned long) (&(p->cred->gid)) -
+				    (unsigned long) (p->cred);
+		parentOffset = (unsigned long) (&(p->real_parent)) -
+				       (unsigned long) (p);
 
         printk(KERN_ALERT "[domain name] {\n");
         printk(KERN_ALERT "    ostype = \"Linux\";\n");
@@ -76,6 +87,14 @@ my_init_module(
                (unsigned int) pidOffset);
         printk(KERN_ALERT "    linux_pgd = 0x%x;\n",
                (unsigned int) pgdOffset);
+		printk(KERN_ALERT "    linux_cred = 0x%x;\n",
+			   (unsigned int) credOffset);
+		printk(KERN_ALERT "    linux_uid = 0x%x;\n",
+			   (unsigned int) uidOffset);
+		printk(KERN_ALERT "    linux_gid = 0x%x;\n",
+			   (unsigned int) gidOffset);
+		printk(KERN_ALERT "    parent_offset = 0x%x;\n",
+			   (unsigned int) parentOffset);
         printk(KERN_ALERT "}\n");
     }
     else {
